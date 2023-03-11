@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
-import { TooltipState } from '../../../contexts/ToolTipState/TooltipState'
+import { Tooltip as TooltipState} from '../../../contexts/ToolTip/Tooltip'
 import styles from './Tooltip.module.css'
 
 const Tooltip = () => {

@@ -1,15 +1,20 @@
 import { useEth } from "../../../contexts/EthContext";
 import { z } from "zod"
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { BlockNumber } from "../../../contexts/BlockNumber/BlockNumber";
 
 export const useManage = () => {
     const [data, setData] = useState({address : '', amount : ''})
-    const { state: { contract, accounts } } = useEth();
+    const { state : { contract, accounts } } = useEth();
+    const [,setBlockNumber] = useRecoilState(BlockNumber)
     const [balance, setBalance] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
 
     const schemaAddress = z.string().regex(/^(0x[0-9a-fA-F]{40})?$/i)
     const schemaAmount = z.string().regex(/^[0-9]*$/i)
+
+
 
     const balanceOf = async () => {
         return await contract.methods.balanceOf(accounts[0]).call({ from: accounts[0] });
@@ -38,6 +43,8 @@ export const useManage = () => {
             (async () => {
                 const value = await balanceOf()
                 setBalance(value);
+                const blockNumber = await contract.methods.deploymentBlockNumber().call({ from: accounts[0] })
+                setBlockNumber(blockNumber)
             })()
     }, [accounts])
 
