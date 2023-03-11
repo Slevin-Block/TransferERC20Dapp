@@ -1,9 +1,9 @@
 import React from 'react'
-import styles from './Link.module.css'
+import styles from './ClipLink.module.css'
 import copy from 'copy-to-clipboard'
 
 
-const Link = ({children, error}) => {
+const ClipLink = ({children, error}) => {
     const handleCopy = (e) => {
         const text = e.target.innerHTML
         copy(text)
@@ -20,4 +20,4 @@ const Link = ({children, error}) => {
     )
 }
 
-export default Link
+export default ClipLink

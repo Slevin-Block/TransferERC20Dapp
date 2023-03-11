@@ -1,0 +1,108 @@
+.controlPanel {
+    position : relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 3rem 0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--onBackground);
+    height: 37vh;
+    width : 600px;
+
+}
+
+.infos{
+    margin-left: 10rem;
+}
+
+label{
+    display : flex;
+    flex-direction : column;
+    margin: 0.5rem 0;
+}
+
+.infos label>*{
+    text-align: left;
+    margin-left : 2rem;
+}
+
+.inputs{
+    display: flex;
+    gap : 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.inputs > *:first-child{
+    width: 330px;
+}
+
+.buttons{
+    display:flex;
+    gap : 1rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom : 0.4rem;
+}
+
+input {
+    background-color: transparent;
+    color : var(--text);
+    border: 2px solid var(--primary);
+    padding : 7px 10px;
+    border-radius: 0.5rem;
+}
+
+.inputError{
+    border: 2px solid var(--error);
+}
+.inputValid{
+    border: 2px solid var(--valid);
+}
+
+button {
+
+    border-radius: 0.5rem;
+    padding : 7px 10px;
+    font : 1.5rem LGC;
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+    color : var(--text);
+}
+
+button:hover{
+    background-color: var(--onBackground);
+    border: 1px solid var(--primary);
+}
+button:active{
+    color : var(--primary);
+    background-color: var(--onBackground);
+    border: 1px solid var(--primary);
+}
+button:disabled{
+    color : var(--primary);
+    background-color: var(--onBackground);
+    border: none;
+}
+
+.loader{
+    background-image: url(../../../assets/img/loading.png) ;
+    background-size: contain;
+    width: 30px;
+    height: 30px;
+    transform-origin: 52% 52%;
+    animation: 1s rotation infinite linear;
+}
+
+@keyframes rotation{
+    0% {
+        transform: rotate(0deg);
+    }
+    50%{
+        transform: rotate(180deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
