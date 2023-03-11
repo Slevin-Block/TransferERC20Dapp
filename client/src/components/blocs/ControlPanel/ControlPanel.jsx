@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styles from './ControlPanel.module.css'
-import { useEth } from "../../../contexts/EthContext";
-import { z } from "zod"
 import ClipLink from "../../atoms/ClipLink/ClipLink";
 import { useManage } from './useManage';
 
-const ControlPanel = ({update}) => {
+const ControlPanel = () => {
 
-    const {accounts, contract, balance, data, setData, schemaAddress, schemaAmount, transfert, isLoading} = useManage(update)
+    const {accounts, contract, balance, data, setData, schemaAddress, schemaAmount, transfert, isLoading} = useManage()
 
     return (
         <div className={styles.controlPanel}>

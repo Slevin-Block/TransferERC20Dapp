@@ -45,6 +45,7 @@ html {
   justify-content: space-between;
   font-size: 1.6rem;
   background-color: var(--background);
+  overflow: hidden;
 }
 
 

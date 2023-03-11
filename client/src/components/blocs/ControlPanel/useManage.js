@@ -2,7 +2,7 @@ import { useEth } from "../../../contexts/EthContext";
 import { z } from "zod"
 import { useEffect, useState } from "react";
 
-export const useManage = (update) => {
+export const useManage = () => {
     const [data, setData] = useState({address : '', amount : ''})
     const { state: { contract, accounts } } = useEth();
     const [balance, setBalance] = useState(0)
@@ -11,7 +11,7 @@ export const useManage = (update) => {
     const schemaAddress = z.string().regex(/^(0x[0-9a-fA-F]{40})?$/i)
     const schemaAmount = z.string().regex(/^[0-9]*$/i)
 
-    const read = async () => {
+    const balanceOf = async () => {
         return await contract.methods.balanceOf(accounts[0]).call({ from: accounts[0] });
     };
 
@@ -24,20 +24,19 @@ export const useManage = (update) => {
         setIsLoading(true)
         try{
             await contract.methods.transfer(to, value).send({ from: accounts[0] });
+            setIsLoading(false)
+            setBalance(await balanceOf());
+            setData({address : '', amount : ''})
         }catch(err){
             setIsLoading(false)
         }
-        setIsLoading(false)
-        setBalance(await read());
-        setData({address : '', amount : ''})
-        update()
     };
 
 
     useEffect(() => {
         accounts &&
             (async () => {
-                const value = await read()
+                const value = await balanceOf()
                 setBalance(value);
             })()
     }, [accounts])

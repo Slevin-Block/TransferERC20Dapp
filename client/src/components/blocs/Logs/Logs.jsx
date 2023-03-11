@@ -3,23 +3,45 @@ import { useEth } from "../../../contexts/EthContext";
 import ClipLink from '../../atoms/ClipLink/ClipLink'
 import styles from './Logs.module.css'
 
-const Logs = ({change}) => {
+const Logs = () => {
 
-    const { state: { contract, accounts } } = useEth();
+    const { state: { contract, accounts  } } = useEth();
     const [logs, setLogs] = useState([])
 
-    const check = async () => {
-        const events = await contract.getPastEvents('transaction', { fromBlock: 0, toBlock: 'latest' })
-        setLogs(events.reverse().map(event => {
-            return {
-                    from : event.returnValues.from,
-                    to : event.returnValues.to,
-                    value : event.returnValues.value,
-            }
-        }))
-    }
 
-    useEffect(() =>{ accounts && check() }, [accounts, change])
+
+    useEffect(() =>{
+        (async() => {
+            if (accounts){
+                if (logs.length === 0){
+                    const events = await contract.getPastEvents('transaction', { fromBlock: 0, toBlock: 'latest' })
+                    setLogs(events.reverse().map(event => {
+                        return {
+                                from : event.returnValues.from,
+                                to : event.returnValues.to,
+                                value : event.returnValues.value,
+                        }
+                    }))
+                }
+
+                await contract.events.transaction({fromBlock:"earliest"})
+                .on('data', event =>
+                    {
+                        const newLogs = [{
+                            from : event.returnValues.from,
+                            to : event.returnValues.to,
+                            value : event.returnValues.value,
+                        }, ...logs]
+                        console.log(newLogs)
+                        setLogs(newLogs)
+                    }
+                )          
+                .on('changed', changed => console.log('changed', changed))
+                .on('error', err => console.log('err', err))
+                .on('connected', str => console.log('connected', str))            
+            }
+        })()
+    }, [accounts,logs])
 
     return (
         <div className={styles.logs}>
