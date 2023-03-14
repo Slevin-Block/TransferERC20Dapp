@@ -1,47 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil';
-import { BlockNumber } from '../../../contexts/BlockNumber/BlockNumber';
-import { useEth } from "../../../contexts/EthContext";
+import { researchEvent, useRxWeb3, watchingEvents } from '../../../contexts/RxWeb3';
 import ClipLink from '../../atoms/ClipLink/ClipLink'
 import styles from './Logs.module.css'
 
+
+
 const Logs = () => {
+    const {isReady, blockNumber} = useRxWeb3()  // Hook RxWeb3
+    const [logs, setLogs] = useState([])        // Tous les logs
+    const [newLog, setNewLog] = useState(null)  // Le dernier log
 
-    const { state: { contract, accounts  } } = useEth();
-    const [logs, setLogs] = useState([])
-    const blockNumber = useRecoilValue(BlockNumber)
+    // Pour récupérer les anciens logs et pour s'abonner à l'arrivée de nouveaux
+    useEffect(() => {
+        if (isReady){
+            // Récupération des anciens logs
+            handleOldTransaction()
 
-    useEffect(() =>{
-        (async() => {
-            if (accounts && blockNumber){
-                if (logs.length === 0){
-                    const events = await contract.getPastEvents('transaction', { fromBlock: blockNumber, toBlock: 'latest' })
-                    setLogs(events.reverse().map(event => {
-                        return {
-                                from : event.returnValues.from,
-                                to : event.returnValues.to,
-                                value : event.returnValues.value,
-                        }
-                    }))
-                }
+            // Abonnement aux nouveaux logs
+            watchingEvents('transaction', setNewLog)
+        }
+    }, [isReady])
 
-                await contract.events.transaction({fromBlock:"earliest"})
-                .on('data', event =>
-                    {
-                        const newLogs = [{
-                            from : event.returnValues.from,
-                            to : event.returnValues.to,
-                            value : event.returnValues.value,
-                        }, ...logs]
-                        setLogs(newLogs)
-                    }
-                )          
-                .on('changed', changed => console.log('changed', changed))
-                .on('error', err => console.log('err', err))
-                .on('connected', str => console.log('connected', str))            
+    // Pour fusionner les logs quand un nouveau arrive
+    useEffect(() =>{ newLog && setLogs([newLog, ...logs]) }, [newLog])
+    
+    function handleOldTransaction () {
+        const cb = (logs) => {
+                setLogs(logs.reverse().map(log => {
+                    return {
+                                from : log.returnValues.from,
+                                to : log.returnValues.to,
+                                value : log.returnValues.value
+                            }
+                }))
             }
-        })()
-    }, [accounts, blockNumber])
+        researchEvent('transaction', cb, blockNumber)
+    }
 
     return (
         <div className={styles.logs}>

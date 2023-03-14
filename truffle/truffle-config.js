@@ -20,10 +20,10 @@ module.exports = {
             },
             network_id : 5,
         },
-        ganache:{
-            host : "192.168.1.131",
+        development:{
+            host : "127.0.0.1",
             port : 8545,
-            network_id : 1337,
+            network_id : "*",
         },
         mumbai:{
             provider : () => {
